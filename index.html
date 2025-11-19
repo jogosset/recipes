@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cocktail Recipe Search</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet"/>
+  <style>
+    body { font-family: 'Roboto', sans-serif; background: #faf7f2; margin: 0; }
+    header { background: #0077b6; color: #fff; padding: 1.2em; text-align: center; }
+    .search-box { margin: 1em auto; max-width: 400px; }
+    .search-box input { width: 100%; padding: 0.9em; font-size: 1.1em; border-radius: 6px; border: 1px solid #ccc; }
+    .recipe { background: #fff; margin: 1em 0.5em; border-radius: 8px; box-shadow: 0 2px 6px #bbb2; padding: 1em; }
+    @media (min-width:600px) {
+      .recipe { max-width: 600px; margin-left:auto; margin-right:auto; }
+    }
+    .ingredients { color:#026a83; margin:0.5em 0; font-size: 1.05em; }
+    .instructions { color:#444; margin:0.4em 0; }
+    .garnish { color:#a9741a; font-size:0.97em; margin-top:0.3em;}
+  </style>
+</head>
+<body>
+<header>
+  <h1>Cocktail Recipe Finder</h1>
+  <div>Search by any ingredient (e.g. lime, bourbon, mint, cream, etc.)</div>
+</header>
+<div class="search-box">
+  <input id="search" type="text" placeholder="Type an ingredient..."/>
+</div>
+<div id="results"></div>
+
+<script src="recipes.js"></script>
+<script>
+  // JavaScript filtering logic
+  const searchInput = document.getElementById('search');
+  const resultsDiv = document.getElementById('results');
+  function render(recipes) {
+    resultsDiv.innerHTML = recipes.length ?
+      recipes.map(r => `
+        <div class="recipe">
+          <h2>${r.title}</h2>
+          <div class="ingredients"><strong>Ingredients:</strong>
+            <ul>${r.ingredients.map(i=>`<li>${i}</li>`).join('')}</ul>
+          </div>
+          <div class="instructions"><strong>Instructions:</strong>
+            <ul>${r.instructions.map(i=>`<li>${i}</li>`).join('')}</ul>
+          </div>
+          ${r.garnish ? `<div class="garnish"><strong>Garnish:</strong> ${r.garnish}</div>` : ''}
+        </div>
+      `).join('') : '<div style="text-align:center;padding:2em;">No recipes found for that ingredient.</div>';
+  }
+  function filterRecipes(query) {
+    if (!query) return RECIPES.slice(0, 12);
+    query = query.toLowerCase();
+    return RECIPES.filter(r =>
+      r.ingredients.some(ing => ing.toLowerCase().includes(query))
+    ).slice(0, 20);
+  }
+  function updateResults() {
+    render(filterRecipes(searchInput.value));
+  }
+  searchInput.addEventListener('input', updateResults);
+  // Initial render
+  render(filterRecipes(""));
+</script>
+</body>
+</html>
