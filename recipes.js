@@ -1,4 +1,4 @@
-[
+const RECIPES = [
   {
     "title": "Drink Recipe Collection",
     "ingredients": [],
